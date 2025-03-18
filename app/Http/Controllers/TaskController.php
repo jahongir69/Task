@@ -9,7 +9,7 @@ use App\Http\Requests\TaskUpdateRequest;
 
 class TaskController extends Controller
 {
-    // Barcha vazifalarni olish (filtrlar bilan)
+
     public function index(Request $request)
     {
         $tasks = Task::where('user_id', auth()->id());
@@ -33,7 +33,7 @@ class TaskController extends Controller
         return response()->json($tasks->get());
     }
 
-    // Yangi vazifa yaratish
+
     public function store(TaskStoreRequest $request)
     {
         $task = Task::create([
@@ -49,7 +49,7 @@ class TaskController extends Controller
         ], 201);
     }
 
-    // Bitta vazifani ko‘rish
+
     public function show(Task $task)
     {
         if ($task->user_id !== auth()->id()) {
@@ -59,7 +59,7 @@ class TaskController extends Controller
         return response()->json($task);
     }
 
-    // Vazifani yangilash
+    
     public function update(TaskUpdateRequest $request, Task $task)
     {
         if ($task->user_id !== auth()->id()) {
@@ -74,7 +74,7 @@ class TaskController extends Controller
         ]);
     }
 
-    // Vazifani o‘chirish
+
     public function destroy(Task $task)
     {
         if ($task->user_id !== auth()->id()) {

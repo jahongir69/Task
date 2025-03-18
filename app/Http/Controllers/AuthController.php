@@ -11,7 +11,7 @@ use App\Http\Requests\LoginRequest;
 
 class AuthController extends Controller
 {
-    // Ro‘yxatdan o‘tish
+    
     public function register(RegisterRequest $request)
     {
         $user = User::create([
@@ -29,7 +29,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // Login
+    
     public function login(LoginRequest $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -49,7 +49,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // Logout
+
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
