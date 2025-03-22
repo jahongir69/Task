@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Controllers;
 
 use App\Models\Task;
@@ -9,6 +10,22 @@ use App\Http\Requests\TaskUpdateRequest;
 
 class TaskController extends Controller
 {
+    protected function sendResponse($result, $message)
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $result,
+            'message' => $message
+        ], 200);
+    }
+
+    protected function sendError($message, $code = 400)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message
+        ], $code);
+    }
 
     public function index(Request $request)
     {
@@ -30,9 +47,8 @@ class TaskController extends Controller
             $tasks->orderBy('created_at', $request->sort_by);
         }
 
-        return response()->json($tasks->get());
+        return $this->sendResponse($tasks->get(), 'Tasks retrieved successfully.');
     }
-
 
     public function store(TaskStoreRequest $request)
     {
@@ -43,46 +59,37 @@ class TaskController extends Controller
             'completed' => $request->completed ?? false,
         ]);
 
-        return response()->json([
-            'message' => 'Vazifa muvaffaqiyatli yaratildi!',
-            'task' => $task
-        ], 201);
+        return $this->sendResponse($task, 'Task created successfully.');
     }
-
 
     public function show(Task $task)
     {
         if ($task->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Sizga ruxsat yo‘q!'], 403);
+            return $this->sendError('Unauthorized access!', 403);
         }
 
-        return response()->json($task);
+        return $this->sendResponse($task, 'Task retrieved successfully.');
     }
 
-    
     public function update(TaskUpdateRequest $request, Task $task)
     {
         if ($task->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Sizga ruxsat yo‘q!'], 403);
+            return $this->sendError('Unauthorized access!', 403);
         }
 
         $task->update($request->validated());
 
-        return response()->json([
-            'message' => 'Vazifa yangilandi!',
-            'task' => $task
-        ]);
+        return $this->sendResponse($task, 'Task updated successfully.');
     }
-
 
     public function destroy(Task $task)
     {
         if ($task->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Sizga ruxsat yo‘q!'], 403);
+            return $this->sendError('Unauthorized access!', 403);
         }
 
         $task->delete();
 
-        return response()->json(['message' => 'Vazifa o‘chirildi!']);
+        return $this->sendResponse([], 'Task deleted successfully.');
     }
 }
